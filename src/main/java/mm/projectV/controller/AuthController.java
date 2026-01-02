@@ -43,7 +43,7 @@ public class AuthController {
             );
         }
 
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), loginRequest.getPassword())
         );
         String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
