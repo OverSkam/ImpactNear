@@ -13,4 +13,6 @@ public class EventResponse {
     private String description;
     private EventStatus status;
     private Long userId;
+    private double longitude;
+    private double latitude;
 }

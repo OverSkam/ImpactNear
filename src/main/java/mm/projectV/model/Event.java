@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import mm.projectV.enums.EventStatus;
+import org.locationtech.jts.geom.Point;
 
 @Data
 @Entity
@@ -27,6 +28,10 @@ public class Event extends AbstractModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-//    private location location;
-//    private date date;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "location", columnDefinition = "POINT")
+    private Point location;
 }

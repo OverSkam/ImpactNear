@@ -10,6 +10,10 @@ import mm.projectV.model.Event;
 import mm.projectV.model.User;
 import mm.projectV.repository.EventRepository;
 import mm.projectV.util.SortingUtil;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -43,8 +47,9 @@ public class EventService {
     public void createEvent(User user, EventRequest createRequest) {
         Event event = eventFacade.toEntity(createRequest);
         event.setUser(user);
+        event.setLocation(createPoint(createRequest.getLongitude(), createRequest.getLatitude()));
         eventRepository.save(event);
-        log.info("New task has been created by user with email: {}", user.getEmail());
+        log.info("New task has been created by user with id: {}", user.getId());
     }
 
     public void updateEvent(User user, Long eventId, EventRequest eventRequest) {
@@ -52,6 +57,7 @@ public class EventService {
         event.setName(eventRequest.getName());
         event.setDescription(eventRequest.getDescription());
         event.setStatus(eventRequest.getStatus());
+        event.setLocation(createPoint(eventRequest.getLongitude(), eventRequest.getLatitude()));
         eventRepository.save(event);
         log.info("Event with id: {} was updated successfully", eventId);
     }
@@ -65,5 +71,10 @@ public class EventService {
     private Event fetchOrThrow(Long userId, Long eventId) {
         return eventRepository.findByUserIdAndId(userId, eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found exception"));
+    }
+
+    private Point createPoint(double longitude, double latitude) {
+        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
+        return factory.createPoint(new Coordinate(longitude, latitude));
     }
 }

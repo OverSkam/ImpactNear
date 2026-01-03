@@ -15,6 +15,8 @@ public class EventFacade {
     public EventResponse toResponse(Event event) {
         EventResponse eventResponse = modelMapper.map(event, EventResponse.class);
         eventResponse.setUserId(event.getUser().getId());
+        eventResponse.setLongitude(event.getLocation().getX());
+        eventResponse.setLatitude(event.getLocation().getY());
         return eventResponse;
     }
 
