@@ -30,6 +30,7 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(authRequests ->
                         authRequests
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/events/get-recommended").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

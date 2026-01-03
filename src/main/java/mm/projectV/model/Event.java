@@ -20,8 +20,9 @@ public class Event extends AbstractModel {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "status")
-    private EventStatus eventStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'PAUSED'")
+    private EventStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
