@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import mm.projectV.enums.EventStatus;
 import org.locationtech.jts.geom.Point;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @Entity
 @AllArgsConstructor
@@ -29,9 +32,24 @@ public class Event extends AbstractModel {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participants;
+
     @Column(name = "address")
     private String address;
 
     @Column(name = "location", columnDefinition = "POINT")
     private Point location;
+
+    @Column(name = "start")
+    private LocalDateTime startDate;
+
+    @Column(name = "end")
+    private LocalDateTime endDate;
+
+    @Column(name = "capacity")
+    private Long participantsCapacity;
+
+    @Column(name = "participants_number")
+    private Long participantsNumber;
 }

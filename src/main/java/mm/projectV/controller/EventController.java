@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
     private final EventService eventService;
 
-    @GetMapping("/get-owned")
+    @GetMapping("/organized-events")
     public ResponseEntity<?> getAllOwnedEvents(
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestParam(defaultValue = "0") int page,
@@ -38,7 +38,7 @@ public class EventController {
         );
     }
 
-    @GetMapping("/get-recommended")
+    @GetMapping("/recommended-events")
     public ResponseEntity<?> getRecommendedEvents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -54,7 +54,7 @@ public class EventController {
         );
     }
 
-    @GetMapping("/get/{eventId}")
+    @GetMapping("/{eventId}")
     public ResponseEntity<?> getEvent(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long eventId
@@ -69,7 +69,7 @@ public class EventController {
         );
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<?> createEvent(
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestBody EventRequest createRequest
@@ -85,7 +85,7 @@ public class EventController {
         );
     }
 
-    @PutMapping("/update/{eventId}")
+    @PutMapping("/{eventId}")
     public ResponseEntity<?> updateEvent(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long eventId,
@@ -102,7 +102,7 @@ public class EventController {
         );
     }
 
-    @DeleteMapping("/delete/{eventId}")
+    @DeleteMapping("/{eventId}")
     public ResponseEntity<?> deleteEvent(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long eventId
