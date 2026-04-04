@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mm.projectV.enums.EventStatus;
+import mm.projectV.validation.FullUpdate;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventRequest {
-    @NotBlank(message = "Event name is required")
+    @NotBlank(message = "Event name is required", groups = FullUpdate.class)
     @Length(max = 40,
             message = "Event name should be maximum 40 characters"
     )
@@ -24,16 +25,16 @@ public class EventRequest {
     )
     private String description;
 
-    @NotBlank(message = "Event latitude is required")
+    @NotBlank(message = "Event latitude is required", groups = FullUpdate.class)
     private Double latitude;
 
-    @NotBlank(message = "Event longitude is required")
+    @NotBlank(message = "Event longitude is required", groups = FullUpdate.class)
     private Double longitude;
 
-    @NotBlank(message = "Event address is required")
+    @NotBlank(message = "Event address is required", groups = FullUpdate.class)
     private String address;
 
-    @NotBlank(message = "Start date is required")
+    @NotBlank(message = "Start date is required", groups = FullUpdate.class)
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;

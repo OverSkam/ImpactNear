@@ -7,6 +7,7 @@ import mm.projectV.dto.EventResponse;
 import mm.projectV.dto.ParticipationRequest;
 import mm.projectV.enums.ParticipationStatus;
 import mm.projectV.exception.JoinException;
+import mm.projectV.exception.LocationException;
 import mm.projectV.exception.NotFoundException;
 import mm.projectV.exception.PermissionException;
 import mm.projectV.facade.EventFacade;
@@ -24,6 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -49,15 +52,13 @@ public class EventService {
             User user, double radius, int page, int size, String sortBy, String sortDirection
     ) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
-        if (user.getLocation() != null) {
-            log.info("User with id: {} is getting recommended events", user.getId());
-            return eventRepository.findWithinRadius(user.getLocation(), radius, PageRequest.of(page, size, sort))
-                    .map(eventFacade::toResponse);
-        }
-        else {
-            log.error("User with id: {} has no location to proceed", user.getId());
-            throw new RuntimeException("User doesn't have a location");
-        }
+        if (user.getLocation() == null)
+            throw new LocationException("User doesn't have a location");
+
+        log.info("User with id: {} is getting recommended events", user.getId());
+        log.error("Users coords: {}", user.getLocation());
+        return eventRepository.findWithinRadius(user.getLocation(), radius, PageRequest.of(page, size, sort))
+                .map(eventFacade::toResponse);
     }
 
     public EventResponse getEvent(User user, Long eventId) {
@@ -76,16 +77,16 @@ public class EventService {
 
     public void updateEvent(User user, Long eventId, EventRequest eventRequest) {
         Event event = fetchOrThrow(user.getId(), eventId);
-        event.setName(eventRequest.getName());
-        event.setDescription(eventRequest.getDescription());
-        event.setStatus(eventRequest.getStatus());
-        event.setAddress(eventRequest.getAddress());
-        event.setLocation(createPoint(eventRequest.getLongitude(), eventRequest.getLatitude()));
-        event.setStartDate(eventRequest.getStartDate());
-        event.setEndDate(eventRequest.getEndDate());
-        event.setParticipantsCapacity(eventRequest.getParticipantsCapacity());
-        event.setStatus(eventRequest.getStatus());
-        event.setIsOpen(eventRequest.getIsOpen());
+        setIfNotNull(event::setName, eventRequest.getName());
+        setIfNotNull(event::setDescription, eventRequest.getDescription());
+        setIfNotNull(event::setAddress, eventRequest.getAddress());
+        setIfNotNull(event::setStartDate, eventRequest.getStartDate());
+        setIfNotNull(event::setEndDate, eventRequest.getEndDate());
+        setIfNotNull(event::setParticipantsCapacity, eventRequest.getParticipantsCapacity());
+        setIfNotNull(event::setStatus, eventRequest.getStatus());
+        setIfNotNull(event::setIsOpen, eventRequest.getIsOpen());
+        if (eventRequest.getLongitude() != null && eventRequest.getLatitude() != null)
+            event.setLocation(createPoint(eventRequest.getLongitude(), eventRequest.getLatitude()));
         eventRepository.save(event);
         log.info("Event with id: {} was updated successfully", eventId);
     }
@@ -134,4 +135,10 @@ public class EventService {
         final GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
         return factory.createPoint(new Coordinate(longitude, latitude));
     }
+
+    private <T> void setIfNotNull(Consumer<T> setter, T value) {
+        if (value != null)
+            setter.accept(value);
+    }
+
 }

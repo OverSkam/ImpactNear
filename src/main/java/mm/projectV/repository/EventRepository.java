@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
-    List<Event> findByUserId(Long userId);
     Optional<Event> findById(Long id);
     Page<Event> findByUserId(Long id, Pageable pageable);
     Page<Event> findAll(Pageable pageable);
@@ -20,7 +19,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e FROM Event e WHERE function('ST_Distance_Sphere', e.location, :center) <= :radius")
     Page<Event> findWithinRadius(
-            @Param("center") org.locationtech.jts.geom.Point center,
+            @Param("center") Point center,
             @Param("radius") double radiusInMeters,
             Pageable pageable
     );

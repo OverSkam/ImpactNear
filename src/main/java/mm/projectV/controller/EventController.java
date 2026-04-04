@@ -9,10 +9,13 @@ import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
 import mm.projectV.service.EventService;
 import mm.projectV.util.ResponseHandler;
+import mm.projectV.validation.FullUpdate;
+import mm.projectV.validation.PartialUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -96,6 +99,7 @@ public class EventController {
     @PostMapping()
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<?> createEvent(
+            @Validated(FullUpdate.class)
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestBody EventRequest createRequest
     ) {
@@ -113,6 +117,7 @@ public class EventController {
     @PutMapping("/{eventId}")
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<?> updateEvent(
+            @Validated(PartialUpdate.class)
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long eventId,
             @RequestBody EventRequest eventRequest

@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.exception.JoinException;
+import mm.projectV.exception.LocationException;
 import mm.projectV.exception.NotFoundException;
 import mm.projectV.exception.PermissionException;
 import mm.projectV.util.ResponseHandler;
@@ -63,6 +64,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PermissionException.class)
     public ResponseEntity<?> handleException(PermissionException e) {
         log.warn("Permission exception [PermissionException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+    }
+
+    @ExceptionHandler(LocationException.class)
+    public ResponseEntity<?> handleException(LocationException e) {
+        log.warn("Location exception [LocationException]: {}", e.getMessage());
 
         return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
     }

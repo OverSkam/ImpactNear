@@ -22,7 +22,7 @@ public class UserController {
     @PatchMapping()
     public ResponseEntity<?> changeUserLocation(
             @AuthenticationPrincipal CustomUserDetails principal,
-            LocationRequest locationRequest
+            @RequestBody LocationRequest locationRequest
     ) {
         User user = principal.getUser();
         log.info("Changing location for user with id: {}", user.getId());
