@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import mm.projectV.enums.Role;
+import org.locationtech.jts.geom.Point;
 
 import java.util.List;
 
@@ -33,4 +35,11 @@ public class User extends AbstractModel {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participations;
+
+    @Column(name = "locatioln")
+    private Point location;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 }

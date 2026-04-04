@@ -25,4 +25,10 @@ public class Participation extends AbstractModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private ParticipationStatus status;
+
+    @Column(name = "approval_request")
+    private String approvalRequest;
+
+    @Column(name = "approval_response")
+    private String approvalResponse;
 }

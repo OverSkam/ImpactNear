@@ -1,12 +1,13 @@
 package mm.projectV.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mm.projectV.enums.EventStatus;
 import org.hibernate.validator.constraints.Length;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -29,6 +30,18 @@ public class EventRequest {
     @NotBlank(message = "Event longitude is required")
     private Double longitude;
 
-    private EventStatus status;
+    @NotBlank(message = "Event address is required")
+    private String address;
+
+    @NotBlank(message = "Start date is required")
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
+
+    private Long participantsCapacity = 10000L;
+
+    private Boolean isOpen = true;
+
+    private EventStatus status = EventStatus.PLANNED;
     private Long userId;
 }

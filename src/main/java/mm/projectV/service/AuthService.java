@@ -2,6 +2,7 @@ package mm.projectV.service;
 
 import lombok.AllArgsConstructor;
 import mm.projectV.dto.RegisterRequest;
+import mm.projectV.enums.Role;
 import mm.projectV.model.User;
 import mm.projectV.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,7 @@ public class AuthService {
     public void register(RegisterRequest registerRequest) {
         User user = modelMapper.map(registerRequest, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.ROLE_USER);
         userRepository.save(user);
     }
 

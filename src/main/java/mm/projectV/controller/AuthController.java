@@ -1,6 +1,7 @@
 package mm.projectV.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LoginRequest;
 import mm.projectV.dto.LoginResponse;
 import mm.projectV.dto.RegisterRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
@@ -32,6 +34,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest loginRequest) {
         UserDetails userDetails = userDetailsService.loadUserByEmail(loginRequest.getEmail());
+
+        log.info("Logging in user");
 
         if (!authService.isValidPassword(loginRequest.getPassword(), userDetails.getPassword())) {
             return ResponseHandler.generateResponse(

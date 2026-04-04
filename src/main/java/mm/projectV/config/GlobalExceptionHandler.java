@@ -3,7 +3,9 @@ package mm.projectV.config;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import mm.projectV.exception.JoinException;
 import mm.projectV.exception.NotFoundException;
+import mm.projectV.exception.PermissionException;
 import mm.projectV.util.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +49,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleException(NotFoundException e) {
         log.warn("Not found exception [NotFoundException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+    }
+
+    @ExceptionHandler(JoinException.class)
+    public ResponseEntity<?> handleException(JoinException e) {
+        log.warn("Join exception [JoinException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+    }
+
+    @ExceptionHandler(PermissionException.class)
+    public ResponseEntity<?> handleException(PermissionException e) {
+        log.warn("Permission exception [PermissionException]: {}", e.getMessage());
 
         return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
     }

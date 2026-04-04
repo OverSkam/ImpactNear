@@ -47,9 +47,12 @@ public class Event extends AbstractModel {
     @Column(name = "end")
     private LocalDateTime endDate;
 
-    @Column(name = "capacity")
+    @Column(name = "participants_capacity")
     private Long participantsCapacity;
 
     @Column(name = "participants_number")
     private Long participantsNumber;
+
+    @Column(name = "is_open")
+    private Boolean isOpen;
 }
