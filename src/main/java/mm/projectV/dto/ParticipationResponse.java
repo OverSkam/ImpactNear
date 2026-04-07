@@ -1,4 +1,21 @@
 package mm.projectV.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import mm.projectV.enums.ParticipationStatus;
+
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParticipationResponse {
+    private Long userId;
+    private Long eventId;
+    private ParticipationStatus status;
+    private String approvalRequest;
+    private String approvalResponse;
+    private LocalDateTime createDate;
+    private LocalDateTime lastModifiedDate;
 }

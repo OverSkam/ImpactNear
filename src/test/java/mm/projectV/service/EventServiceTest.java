@@ -62,25 +62,25 @@ class EventServiceTest {
     }
 
     @Test
-    void getEvent_WhenExists_ShouldReturnResponse() {
+    void getOrganizedEvent_WhenExists_ShouldReturnResponse() {
         // Arrange
         when(eventRepository.findByUserIdAndId(1L, 100L)).thenReturn(Optional.of(testEvent));
         when(eventFacade.toResponse(testEvent)).thenReturn(new EventResponse());
 
         // Act
-        EventResponse response = eventService.getEvent(testUser, 100L);
+        EventResponse response = eventService.getOrganizedEvent(testUser, 100L);
 
         // Assert
         assertNotNull(response);
     }
 
     @Test
-    void getEvent_WhenNotExists_ShouldThrowException() {
+    void getOrganizedEvent_WhenNotExists_ShouldThrowException() {
         // Arrange
         when(eventRepository.findByUserIdAndId(1L, 100L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NotFoundException.class, () -> eventService.getEvent(testUser, 100L));
+        assertThrows(NotFoundException.class, () -> eventService.getOrganizedEvent(testUser, 100L));
     }
 
     @Test
