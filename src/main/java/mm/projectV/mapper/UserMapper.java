@@ -1,4 +1,4 @@
-package mm.projectV.facade;
+package mm.projectV.mapper;
 
 import lombok.AllArgsConstructor;
 import mm.projectV.dto.ProfileResponse;
@@ -9,13 +9,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class UserFacade {
+public class UserMapper {
     private final ModelMapper modelMapper;
 
     public ProfileResponse toResponse(User user) {
         ProfileResponse profileResponse = modelMapper.map(user, ProfileResponse.class);
-        profileResponse.setLongitude(user.getLocation().getX());
-        profileResponse.setLatitude(user.getLocation().getY());
+        if (user.getLocation() != null) {
+            profileResponse.setLongitude(user.getLocation().getX());
+            profileResponse.setLatitude(user.getLocation().getY());
+        }
+
         return profileResponse;
     }
 

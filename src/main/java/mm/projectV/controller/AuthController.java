@@ -35,18 +35,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest loginRequest) {
-        UserDetails userDetails = userDetailsService.loadUserByEmail(loginRequest.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
 
         log.info("Logging in user");
-
-//        if (!authService.isValidPassword(loginRequest.getPassword(), userDetails.getPassword())) {
-//            return ResponseHandler.generateResponse(
-//                    HttpStatus.UNAUTHORIZED,
-//                    true,
-//                    "Invalid password",
-//                    null
-//            );
-//        }
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), loginRequest.getPassword())
@@ -73,9 +64,7 @@ public class AuthController {
         }
 
         authService.register(registerRequest);
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(registerRequest.getEmail(), registerRequest.getPassword())
-//        );
+
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 false,

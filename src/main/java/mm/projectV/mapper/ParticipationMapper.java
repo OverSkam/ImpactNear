@@ -1,4 +1,4 @@
-package mm.projectV.facade;
+package mm.projectV.mapper;
 
 import lombok.AllArgsConstructor;
 import mm.projectV.dto.ParticipationRequest;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class ParticipationFacade {
+public class ParticipationMapper {
     private final ModelMapper modelMapper;
 
     public ParticipationResponse toResponse(Participation participation) {

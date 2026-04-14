@@ -1,4 +1,4 @@
-package mm.projectV.config;
+package mm.projectV.handler;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException ex) {
+    public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
         log.warn("Constraint violation exception [ConstraintViolationException]: {}", ex.getMessage());
 
         Map<String, String> errors = ex.getConstraintViolations().stream()
@@ -31,11 +31,11 @@ public class GlobalExceptionHandler {
                         violation -> violation.getPropertyPath().toString(),
                         ConstraintViolation::getMessage
                 ));
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, "Validation failed", errors);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Validation exception [MethodArgumentNotValidException]: {}", ex.getMessage());
 
         Map<String, String> errors = new HashMap<>();
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, "Validation failed", errors);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -58,21 +58,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleException(JoinException e) {
         log.warn("Join exception [JoinException]: {}", e.getMessage());
 
-        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+        return ResponseHandler.generateResponse(HttpStatus.CONFLICT, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(PermissionException.class)
     public ResponseEntity<?> handleException(PermissionException e) {
         log.warn("Permission exception [PermissionException]: {}", e.getMessage());
 
-        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+        return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(LocationException.class)
     public ResponseEntity<?> handleException(LocationException e) {
         log.warn("Location exception [LocationException]: {}", e.getMessage());
 
-        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(Exception.class)

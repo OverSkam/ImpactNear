@@ -3,7 +3,7 @@ package mm.projectV.service;
 import mm.projectV.dto.EventRequest;
 import mm.projectV.dto.EventResponse;
 import mm.projectV.exception.NotFoundException;
-import mm.projectV.facade.EventFacade;
+import mm.projectV.mapper.EventMapper;
 import mm.projectV.model.Event;
 import mm.projectV.model.User;
 import mm.projectV.repository.EventRepository;
@@ -27,7 +27,7 @@ class EventServiceTest {
     private EventRepository eventRepository;
 
     @Mock
-    private EventFacade eventFacade;
+    private EventMapper eventMapper;
 
     @InjectMocks
     private EventService eventService;
@@ -51,7 +51,7 @@ class EventServiceTest {
     void createEvent_ShouldSaveEvent() {
         // Arrange
         EventRequest request = new EventRequest();
-        when(eventFacade.toEntity(request)).thenReturn(testEvent);
+        when(eventMapper.toEntity(request)).thenReturn(testEvent);
 
         // Act
         eventService.createEvent(testUser, request);
@@ -65,7 +65,7 @@ class EventServiceTest {
     void getOrganizedEvent_WhenExists_ShouldReturnResponse() {
         // Arrange
         when(eventRepository.findByUserIdAndId(1L, 100L)).thenReturn(Optional.of(testEvent));
-        when(eventFacade.toResponse(testEvent)).thenReturn(new EventResponse());
+        when(eventMapper.toResponse(testEvent)).thenReturn(new EventResponse());
 
         // Act
         EventResponse response = eventService.getOrganizedEvent(testUser, 100L);

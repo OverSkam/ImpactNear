@@ -1,4 +1,4 @@
-package mm.projectV.facade;
+package mm.projectV.mapper;
 
 import lombok.AllArgsConstructor;
 import mm.projectV.dto.EventRequest;
@@ -9,14 +9,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class EventFacade {
+public class EventMapper {
     private final ModelMapper modelMapper;
 
     public EventResponse toResponse(Event event) {
         EventResponse eventResponse = modelMapper.map(event, EventResponse.class);
         eventResponse.setUserId(event.getUser().getId());
-        eventResponse.setLongitude(event.getLocation().getX());
-        eventResponse.setLatitude(event.getLocation().getY());
+        if (event.getLocation() != null) {
+            eventResponse.setLongitude(event.getLocation().getX());
+            eventResponse.setLatitude(event.getLocation().getY());
+        }
         return eventResponse;
     }
 

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LocationRequest;
 import mm.projectV.dto.ProfileUpdateRequest;
-import mm.projectV.exception.NotFoundException;
 import mm.projectV.model.User;
 import mm.projectV.repository.UserRepository;
 import org.locationtech.jts.geom.Coordinate;
@@ -36,7 +35,7 @@ public class UserService {
         setIfNotNull(user::setName, profileRequest.getName());
         setIfNotNull(user::setSurname, profileRequest.getSurname());
         setIfNotNull(user::setEmail, profileRequest.getEmail());
-        if (profileRequest.getPassword() != null)
+        if (profileRequest.getPassword() != null && !profileRequest.getPassword().isBlank())
             user.setPassword(passwordEncoder.encode(profileRequest.getPassword()));
         userRepository.save(user);
         log.info("User with id: {}, was updated successfully", user.getId());

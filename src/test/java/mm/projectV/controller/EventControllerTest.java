@@ -2,7 +2,7 @@ package mm.projectV.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mm.projectV.dto.EventRequest;
-import mm.projectV.facade.EventFacade;
+import mm.projectV.mapper.EventMapper;
 import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
 import mm.projectV.service.AuthService;
@@ -62,7 +62,7 @@ class EventControllerTest {
 
     // If you have a Facade or other common utils injected in controllers:
     @MockitoBean
-    private EventFacade eventFacade;
+    private EventMapper eventMapper;
 
     private CustomUserDetails mockUserDetails;
     private User testUser;

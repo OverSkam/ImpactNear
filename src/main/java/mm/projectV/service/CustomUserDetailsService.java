@@ -16,10 +16,6 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public UserDetails loadUserByEmail(String email) {
-        return loadUserByUsername(email);
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByEmail(username)

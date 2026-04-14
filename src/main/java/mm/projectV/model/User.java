@@ -36,7 +36,7 @@ public class User extends AbstractModel {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participations;
 
-    @Column(name = "locatioln", columnDefinition = "POINT SRID 4326")
+    @Column(name = "location", columnDefinition = "POINT SRID 4326")
     private Point location;
 
     @Enumerated(EnumType.STRING)

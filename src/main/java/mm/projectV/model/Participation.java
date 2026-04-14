@@ -14,11 +14,11 @@ import mm.projectV.enums.ParticipationStatus;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "participations")
 public class Participation extends AbstractModel {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
 

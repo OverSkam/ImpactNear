@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LocationRequest;
 import mm.projectV.dto.ProfileUpdateRequest;
-import mm.projectV.dto.RegisterRequest;
-import mm.projectV.facade.UserFacade;
+import mm.projectV.mapper.UserMapper;
 import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
 import mm.projectV.service.UserService;
@@ -13,6 +12,7 @@ import mm.projectV.util.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
-    private final UserFacade userFacade;
+    private final UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@AuthenticationPrincipal CustomUserDetails principal) {
@@ -31,14 +31,14 @@ public class UserController {
                 HttpStatus.OK,
                 false,
                 "My profile",
-                userFacade.toResponse(user)
+                userMapper.toResponse(user)
         );
     }
 
     @PutMapping("/me")
     public ResponseEntity<?> updateUserProfile(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestBody ProfileUpdateRequest profileRequest
+            @Validated @RequestBody ProfileUpdateRequest profileRequest
     ) {
         User user = principal.getUser();
         log.info("Updating profile for user with id: {}", user.getId());
