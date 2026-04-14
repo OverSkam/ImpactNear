@@ -17,6 +17,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAll(Pageable pageable);
     List<Event> findAll();
     Optional<Event> findByUserIdAndId(Long userId, Long id);
+    boolean existsByIdAndUserId(Long eventId, Long userId);
 
     @Query("SELECT e FROM Event e WHERE function('ST_Distance_Sphere', e.location, :center) <= :radius")
     Page<Event> findWithinRadius(

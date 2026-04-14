@@ -41,6 +41,9 @@ public class EventService {
     private final EventFacade eventFacade;
     private final ParticipationRepository participationRepository;
     private final ParticipationFacade participationFacade;
+    private static final GeometryFactory GEO_FACTORY =
+            new GeometryFactory(new PrecisionModel(), 4326);
+
 
     public Page<EventResponse> getAllOrganizedEvents(User user, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
@@ -69,7 +72,7 @@ public class EventService {
             throw new LocationException("User doesn't have a location");
 
         log.info("User with id: {} is getting recommended events", user.getId());
-        log.error("Users coords: {}", user.getLocation());
+        log.info("Users coords: {}", user.getLocation());
         return eventRepository.findWithinRadius(user.getLocation(), radius, PageRequest.of(page, size, sort))
                 .map(eventFacade::toResponse);
     }
@@ -110,15 +113,28 @@ public class EventService {
         log.info("Event with id: {} was deleted successfully", eventId);
     }
 
-    public Page<ParticipationResponse> getParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
+//    public Page<ParticipationResponse> getParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
+//        Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
+//
+//        if (user.getRole().equals(Role.ROLE_USER))
+//            return participationRepository.findByUserId(user.getId(), PageRequest.of(page, size, sort))
+//                    .map(participationFacade::toResponse);
+//
+//        List<Long> ids = eventRepository.findByUserId(user.getId()).stream().map(AbstractModel::getId).toList();
+//        return participationRepository.findByEventIdIn(ids, PageRequest.of(page, size, sort))
+//                .map(participationFacade::toResponse);
+//    }
+
+    public Page<ParticipationResponse> getMyParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
 
-        if (user.getRole().equals(Role.ROLE_USER))
-            return participationRepository.findByUserId(user.getId(), PageRequest.of(page, size, sort))
-                    .map(participationFacade::toResponse);
+        return participationRepository.findByUserId(user.getId(), PageRequest.of(page, size, sort))
+                .map(participationFacade::toResponse);
+    }
 
-        List<Long> ids = eventRepository.findAll().stream().map(AbstractModel::getId).toList();
-        return participationRepository.findByEventIdIn(ids, PageRequest.of(page, size, sort))
+    public Page<ParticipationResponse> getOthersParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
+        Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
+        return participationRepository.findByEventUserId(user.getId(), PageRequest.of(page, size, sort))
                 .map(participationFacade::toResponse);
     }
 
@@ -133,21 +149,42 @@ public class EventService {
         throw new PermissionException("Access to participation requests denied");
     }
 
-    public ParticipationResponse getParticipationRequest(User user, Long participationId) {
+//    public ParticipationResponse getParticipationRequest(User user, Long participationId) {
+//        Participation participation = participationRepository.findById(participationId)
+//                .orElseThrow(() -> new NotFoundException("Participation request not found"));
+//
+//        if (user.getRole().equals(Role.ROLE_USER))
+//            if (user.getId() == participation.getUser().getId())
+//                return participationFacade.toResponse(participation);
+//
+//        if (user.getRole().equals(Role.ROLE_ORGANIZER)) {
+//            List<Long> ids = eventRepository.findByUserId(user.getId()).stream().map(Event::getUser).map(User::getId).toList();
+//            if (ids.contains(user.getId()))
+//                return participationFacade.toResponse(participation);
+//        }
+//
+//        throw new PermissionException("Access to participation request denied");
+//    }
+
+    public ParticipationResponse getMyParticipationRequest(User user, Long participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new NotFoundException("Participation request not found"));
 
-        if (user.getRole().equals(Role.ROLE_USER))
-            if (user.getId() == participation.getUser().getId())
-                return participationFacade.toResponse(participation);
-
-        if (user.getRole().equals(Role.ROLE_ORGANIZER)) {
-            List<Long> ids = eventRepository.findAll().stream().map(Event::getUser).map(User::getId).toList();
-            if (ids.contains(user.getId()))
-                return participationFacade.toResponse(participation);
-        }
+        if (user.getId().equals(participation.getUser().getId()))
+            return participationFacade.toResponse(participation);
 
         throw new PermissionException("Access to participation request denied");
+    }
+
+    public ParticipationResponse getOthersParticipationRequest(User user, Long participationId) {
+        Participation participation = participationRepository.findById(participationId)
+                .orElseThrow(() -> new NotFoundException("Participation request not found"));
+
+        if (!eventRepository.existsByIdAndUserId(participation.getEvent().getId(), user.getId()))
+            throw new PermissionException("Access to participation request denied");
+
+        return participationFacade.toResponse(participation);
+
     }
 
     public void createParticipationRequest(User user, Long eventId, ParticipationRequest participationRequest) {
@@ -167,10 +204,9 @@ public class EventService {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new NotFoundException("Participation not found"));
 
-        Event event = eventRepository.findById(eventId)
-                        .orElseThrow(() -> new NotFoundException("Event not found"));
+        Event event = participation.getEvent();
 
-        if (event.getUser().getId() != user.getId())
+        if (!event.getUser().getId().equals(user.getId()))
             throw new PermissionException("Permission denied");
 
         participation.setApprovalResponse(participationRequest.getMessage());
@@ -185,8 +221,7 @@ public class EventService {
     }
 
     private Point createPoint(double longitude, double latitude) {
-        final GeometryFactory factory = new GeometryFactory(new PrecisionModel(), 4326);
-        return factory.createPoint(new Coordinate(longitude, latitude));
+        return GEO_FACTORY.createPoint(new Coordinate(longitude, latitude));
     }
 
     private <T> void setIfNotNull(Consumer<T> setter, T value) {

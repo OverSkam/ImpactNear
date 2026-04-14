@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LoginRequest;
 import mm.projectV.dto.LoginResponse;
 import mm.projectV.dto.RegisterRequest;
+import mm.projectV.enums.Role;
+import mm.projectV.model.CustomUserDetails;
 import mm.projectV.service.AuthService;
 import mm.projectV.service.CustomUserDetailsService;
 import mm.projectV.util.JwtUtil;
@@ -37,24 +39,25 @@ public class AuthController {
 
         log.info("Logging in user");
 
-        if (!authService.isValidPassword(loginRequest.getPassword(), userDetails.getPassword())) {
-            return ResponseHandler.generateResponse(
-                    HttpStatus.UNAUTHORIZED,
-                    true,
-                    "Invalid password",
-                    null
-            );
-        }
+//        if (!authService.isValidPassword(loginRequest.getPassword(), userDetails.getPassword())) {
+//            return ResponseHandler.generateResponse(
+//                    HttpStatus.UNAUTHORIZED,
+//                    true,
+//                    "Invalid password",
+//                    null
+//            );
+//        }
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), loginRequest.getPassword())
         );
         String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
+        Role role = ((CustomUserDetails) userDetails).getUser().getRole();
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 false,
                 "User logged in successfully",
-                new LoginResponse(jwtToken)
+                new LoginResponse(jwtToken, role)
         );
     }
 
@@ -70,9 +73,9 @@ public class AuthController {
         }
 
         authService.register(registerRequest);
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(registerRequest.getEmail(), registerRequest.getPassword())
-        );
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(registerRequest.getEmail(), registerRequest.getPassword())
+//        );
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 false,

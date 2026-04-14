@@ -3,21 +3,17 @@ package mm.projectV.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mm.projectV.enums.EventStatus;
-
-import java.time.LocalDateTime;
+import mm.projectV.enums.Role;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventResponse {
+public class ProfileResponse {
     private Long id;
     private String name;
-    private String description;
-    private EventStatus status;
-    private Long userId;
+    private String surname;
+    private String email;
     private double longitude;
     private double latitude;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private Role role;
 }

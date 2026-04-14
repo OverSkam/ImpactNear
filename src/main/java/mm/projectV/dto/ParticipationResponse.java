@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParticipationResponse {
+    private Long id;
     private Long userId;
     private Long eventId;
     private ParticipationStatus status;

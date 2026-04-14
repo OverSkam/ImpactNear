@@ -113,9 +113,8 @@ public class EventController {
     @PostMapping()
     @PreAuthorize("hasRole('ORGANIZER')")
     public ResponseEntity<?> createEvent(
-            @Validated(FullUpdate.class)
             @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestBody EventRequest createRequest
+            @Validated(FullUpdate.class) @RequestBody EventRequest createRequest
     ) {
         User user = principal.getUser();
         log.info("Creating event for user with id: {}", user.getId());
@@ -164,26 +163,78 @@ public class EventController {
         );
     }
 
-    @GetMapping("/participation-requests")
-    public ResponseEntity<?> getParticipationRequests(
+//    @GetMapping("/participation-requests")
+//    public ResponseEntity<?> getParticipationRequests(
+//            @AuthenticationPrincipal CustomUserDetails principal,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(defaultValue = "status") String sortBy,
+//            @RequestParam(defaultValue = "asc") String sortDirection
+//            ) {
+//        User user = principal.getUser();
+//        log.info("Fetching participation requests for user with id: {}", user.getId());
+//        return ResponseHandler.generateResponse(
+//                HttpStatus.OK,
+//                false,
+//                "Participation requests was fetched successfully",
+//                eventService.getParticipationRequests(user, page, size, sortBy, sortDirection)
+//        );
+//    }
+
+    @GetMapping("/my-participation-requests")
+    public ResponseEntity<?> getMyParticipationRequests(
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "status") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection
-            ) {
+    ) {
         User user = principal.getUser();
-        log.info("Fetching participation requests for user with id: {}", user.getId());
+        log.info("Fetching participation requests for user with id: {} which he sent", user.getId());
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 false,
-                "Participation requests was fetched successfully",
-                eventService.getParticipationRequests(user, page, size, sortBy, sortDirection)
+                "Participation requests which user sent was fetched successfully",
+                eventService.getMyParticipationRequests(user, page, size, sortBy, sortDirection)
         );
     }
 
-    @GetMapping("/participation-requests/{participationId}")
-    public ResponseEntity<?> getParticipationRequest(
+    @GetMapping("/others-participation-requests")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> getOthersParticipationRequests(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "status") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ) {
+        User user = principal.getUser();
+        log.info("Fetching participation requests which was sent by others for user with id: {}", user.getId());
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Participation requests which user sent was fetched successfully",
+                eventService.getOthersParticipationRequests(user, page, size, sortBy, sortDirection)
+        );
+    }
+
+//    @GetMapping("/participation-requests/{participationId}")
+//    public ResponseEntity<?> getParticipationRequest(
+//            @AuthenticationPrincipal CustomUserDetails principal,
+//            @PathVariable Long participationId
+//    ) {
+//        User user = principal.getUser();
+//        log.info("Fetching participation request with id: {} for user with id: {}", participationId, user.getId());
+//        return ResponseHandler.generateResponse(
+//                HttpStatus.OK,
+//                false,
+//                "Participation request was fetched successfully",
+//                eventService.getParticipationRequest(user, participationId)
+//        );
+//    }
+
+    @GetMapping("/my-participation-requests/{participationId}")
+    public ResponseEntity<?> getMyParticipationRequest(
             @AuthenticationPrincipal CustomUserDetails principal,
             @PathVariable Long participationId
     ) {
@@ -193,7 +244,23 @@ public class EventController {
                 HttpStatus.OK,
                 false,
                 "Participation request was fetched successfully",
-                eventService.getParticipationRequest(user, participationId)
+                eventService.getMyParticipationRequest(user, participationId)
+        );
+    }
+
+    @GetMapping("/others-participation-requests/{participationId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> getOthersParticipationRequest(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @PathVariable Long participationId
+    ) {
+        User user = principal.getUser();
+        log.info("Fetching participation request with id: {} for user with id: {}", participationId, user.getId());
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Participation request was fetched successfully",
+                eventService.getOthersParticipationRequest(user, participationId)
         );
     }
 
