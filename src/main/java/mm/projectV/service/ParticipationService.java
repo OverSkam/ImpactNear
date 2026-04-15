@@ -6,8 +6,8 @@ import mm.projectV.dto.ParticipationRequest;
 import mm.projectV.dto.ParticipationResponse;
 import mm.projectV.enums.ParticipationStatus;
 import mm.projectV.enums.Role;
-import mm.projectV.exception.JoinException;
 import mm.projectV.exception.NotFoundException;
+import mm.projectV.exception.ParticipationException;
 import mm.projectV.exception.PermissionException;
 import mm.projectV.mapper.ParticipationMapper;
 import mm.projectV.model.Event;
@@ -77,10 +77,13 @@ public class ParticipationService {
     public void createParticipationRequest(User user, Long eventId, ParticipationRequest participationRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found exception"));
-        if (event.getUser().equals(user)) {
-            log.warn("User is trying to join his own event");
-            throw new JoinException("User can not join his own event");
-        }
+
+        if (event.getUser().equals(user))
+            throw new ParticipationException("User can not join his own event");
+
+        if (participationRepository.existsByUserIdAndEventId(user.getId(), eventId))
+            throw new ParticipationException("The user has already submitted a request for participation");
+
         Participation participation = new Participation(user, event, ParticipationStatus.PENDING, participationRequest.getMessage(), "");
         participationRepository.save(participation);
         log.info("Participation request was created");
@@ -92,9 +95,21 @@ public class ParticipationService {
                 .orElseThrow(() -> new NotFoundException("Participation not found"));
 
         Event event = participation.getEvent();
+        if (!event.getId().equals(eventId))
+            throw new PermissionException("Permission denied");
 
         if (!event.getUser().getId().equals(user.getId()))
             throw new PermissionException("Permission denied");
+
+        if (!participation.getStatus().equals(ParticipationStatus.PENDING))
+            throw new ParticipationException("The participation request has already been reviewed");
+
+        if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED)
+                && event.getParticipantsNumber() >= event.getParticipantsCapacity())
+            throw new ParticipationException("The participant limit for this event has been exceeded");
+
+        if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED))
+            event.setParticipantsNumber(event.getParticipantsNumber() + 1);
 
         participation.setApprovalResponse(participationRequest.getMessage());
         participation.setStatus(participationRequest.getStatus());

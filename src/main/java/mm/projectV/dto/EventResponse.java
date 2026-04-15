@@ -20,4 +20,6 @@ public class EventResponse {
     private double latitude;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private Long participantsCapacity;
+    private Long participantsNumber;
 }

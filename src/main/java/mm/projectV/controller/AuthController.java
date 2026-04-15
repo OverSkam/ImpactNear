@@ -10,7 +10,7 @@ import mm.projectV.model.CustomUserDetails;
 import mm.projectV.service.AuthService;
 import mm.projectV.service.CustomUserDetailsService;
 import mm.projectV.util.JwtUtil;
-import mm.projectV.util.ResponseHandler;
+import mm.projectV.handler.ResponseHandler;
 import mm.projectV.validation.FullUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

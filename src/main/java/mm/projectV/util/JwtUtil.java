@@ -3,23 +3,32 @@ package mm.projectV.util;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String secretKey;
+    private final SecretKey secretKey;
 
     @Autowired
     public JwtUtil(Dotenv dotenv) {
-        secretKey = dotenv.get("JWT_TOKEN_SECRET");
+        byte[] keyBytes = Base64.getUrlDecoder().decode(dotenv.get("JWT_TOKEN_SECRET"));
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
+
     public String generateToken(String username) {
-        return createToken(username);
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7))
+                .signWith(secretKey)
+                .compact();
     }
 
     public String extractUsername(String token) {
@@ -30,24 +39,12 @@ public class JwtUtil {
         return !isTokenExpired(token);
     }
 
-    private byte[] getSecretKey() {
-        return Base64.getUrlDecoder().decode(secretKey);
-    }
-
-    private String createToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
-                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, getSecretKey())
-                .compact();
-    }
-
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSecretKey())
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private boolean isTokenExpired(String token) {

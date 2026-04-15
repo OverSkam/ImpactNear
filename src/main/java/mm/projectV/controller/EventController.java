@@ -8,7 +8,7 @@ import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
 import mm.projectV.service.EventService;
 import mm.projectV.service.ParticipationService;
-import mm.projectV.util.ResponseHandler;
+import mm.projectV.handler.ResponseHandler;
 import mm.projectV.validation.FullUpdate;
 import mm.projectV.validation.PartialUpdate;
 import org.springframework.http.HttpStatus;

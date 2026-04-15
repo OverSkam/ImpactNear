@@ -3,11 +3,7 @@ package mm.projectV.handler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import mm.projectV.exception.JoinException;
-import mm.projectV.exception.LocationException;
-import mm.projectV.exception.NotFoundException;
-import mm.projectV.exception.PermissionException;
-import mm.projectV.util.ResponseHandler;
+import mm.projectV.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -54,13 +50,6 @@ public class GlobalExceptionHandler {
         return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
     }
 
-    @ExceptionHandler(JoinException.class)
-    public ResponseEntity<?> handleException(JoinException e) {
-        log.warn("Join exception [JoinException]: {}", e.getMessage());
-
-        return ResponseHandler.generateResponse(HttpStatus.CONFLICT, true, e.getMessage(), null);
-    }
-
     @ExceptionHandler(PermissionException.class)
     public ResponseEntity<?> handleException(PermissionException e) {
         log.warn("Permission exception [PermissionException]: {}", e.getMessage());
@@ -75,10 +64,25 @@ public class GlobalExceptionHandler {
         return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, e.getMessage(), null);
     }
 
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<?> handleException(InvalidRequestException e) {
+        log.warn("Invalid request exception [InvalidRequestException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, e.getMessage(), null);
+    }
+
+    @ExceptionHandler(ParticipationException.class)
+    public ResponseEntity<?> handleException(ParticipationException e) {
+        log.warn("Participation exception [ParticipationException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.CONFLICT, true, e.getMessage(), null);
+    }
+
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
         log.error("Internal server error [Exception]: {}", e.getMessage());
 
-        return ResponseHandler.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, e.getMessage(), null);
+        return ResponseHandler.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Internal server error", null);
     }
 }

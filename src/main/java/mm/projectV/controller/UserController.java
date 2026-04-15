@@ -8,7 +8,7 @@ import mm.projectV.mapper.UserMapper;
 import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
 import mm.projectV.service.UserService;
-import mm.projectV.util.ResponseHandler;
+import mm.projectV.handler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

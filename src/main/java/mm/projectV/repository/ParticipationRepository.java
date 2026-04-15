@@ -14,6 +14,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     Optional<Participation> findById(Long id);
     Page<Participation> findByUserId(Long userId, Pageable pageable);
     Page<Participation> findByEventId(Long eventId, Pageable pageable);
+    boolean existsByUserIdAndEventId(Long userId, Long eventId);
 
     @Query("SELECT p FROM Participation p WHERE p.event.user.id = :userId")
     Page<Participation> findByEventUserId(@Param("userId") Long userId, Pageable pageable);

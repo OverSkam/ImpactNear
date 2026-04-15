@@ -24,7 +24,7 @@ public class User extends AbstractModel {
     @Column(name="surname", nullable = false)
     private String surname;
 
-    @Column(name="email", nullable = false)
+    @Column(name="email", nullable = false, unique = true)
     private String email;
 
     @Column(name="password", nullable = false)

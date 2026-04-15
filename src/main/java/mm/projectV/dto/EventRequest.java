@@ -1,5 +1,7 @@
 package mm.projectV.dto;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,9 +29,13 @@ public class EventRequest {
     private String description;
 
     @NotNull(message = "Event latitude is required", groups = FullUpdate.class)
+    @DecimalMin(value = "-90.0")
+    @DecimalMax(value = "90.0")
     private Double latitude;
 
     @NotNull(message = "Event longitude is required", groups = FullUpdate.class)
+    @DecimalMin(value = "-180.0")
+    @DecimalMax(value = "180.0")
     private Double longitude;
 
     @NotBlank(message = "Event address is required", groups = FullUpdate.class)
