@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.ParticipationRequest;
 import mm.projectV.dto.ParticipationResponse;
+import mm.projectV.enums.EventStatus;
 import mm.projectV.enums.ParticipationStatus;
 import mm.projectV.enums.Role;
 import mm.projectV.exception.NotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -29,6 +31,7 @@ public class ParticipationService {
     private final ParticipationMapper participationMapper;
     private final EventRepository eventRepository;
 
+    @Transactional(readOnly = true)
     public Page<ParticipationResponse> getMyParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
 
@@ -36,12 +39,14 @@ public class ParticipationService {
                 .map(participationMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public Page<ParticipationResponse> getIncomingParticipationRequests(User user, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
         return participationRepository.findByEventUserId(user.getId(), PageRequest.of(page, size, sort))
                 .map(participationMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public Page<ParticipationResponse> getParticipationRequestsRelatedToEvent(User user, Long eventId, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
 
@@ -53,6 +58,7 @@ public class ParticipationService {
         throw new PermissionException("Access to participation requests denied");
     }
 
+    @Transactional(readOnly = true)
     public ParticipationResponse getMyParticipationRequest(User user, Long participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new NotFoundException("Participation request not found"));
@@ -63,6 +69,7 @@ public class ParticipationService {
         throw new PermissionException("Access to participation request denied");
     }
 
+    @Transactional(readOnly = true)
     public ParticipationResponse getIncomingParticipationRequest(User user, Long participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new NotFoundException("Participation request not found"));
@@ -74,6 +81,7 @@ public class ParticipationService {
 
     }
 
+    @Transactional
     public void createParticipationRequest(User user, Long eventId, ParticipationRequest participationRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found exception"));
@@ -89,6 +97,7 @@ public class ParticipationService {
         log.info("Participation request was created");
     }
 
+    @Transactional
     public void respondToParticipationRequest(User user, Long eventId, Long participationId, ParticipationRequest participationRequest) {
         // TODO: notify on approve/reject
         Participation participation = participationRepository.findById(participationId)

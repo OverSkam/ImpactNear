@@ -4,18 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.EventRequest;
 import mm.projectV.dto.EventResponse;
-import mm.projectV.dto.ParticipationRequest;
-import mm.projectV.dto.ParticipationResponse;
-import mm.projectV.enums.ParticipationStatus;
-import mm.projectV.enums.Role;
-import mm.projectV.exception.JoinException;
 import mm.projectV.exception.LocationException;
 import mm.projectV.exception.NotFoundException;
-import mm.projectV.exception.PermissionException;
 import mm.projectV.mapper.EventMapper;
 import mm.projectV.mapper.ParticipationMapper;
 import mm.projectV.model.Event;
-import mm.projectV.model.Participation;
 import mm.projectV.model.User;
 import mm.projectV.repository.EventRepository;
 import mm.projectV.repository.ParticipationRepository;
@@ -28,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Consumer;
 
@@ -37,24 +31,24 @@ import java.util.function.Consumer;
 public class EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final ParticipationRepository participationRepository;
-    private final ParticipationMapper participationMapper;
     private static final GeometryFactory GEO_FACTORY =
             new GeometryFactory(new PrecisionModel(), 4326);
 
-
+    @Transactional(readOnly = true)
     public Page<EventResponse> getAllOrganizedEvents(User user, int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
         return eventRepository.findByUserId(user.getId(), PageRequest.of(page, size, sort))
                 .map(eventMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public Page<EventResponse> getRandomEvents(int page, int size, String sortBy, String sortDirection) {
         Sort sort = SortingUtil.sortGenerator(sortBy, sortDirection);
         return eventRepository.findAll(PageRequest.of(page, size, sort))
                 .map(eventMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public EventResponse getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                         .orElseThrow(() -> new NotFoundException("Event not found"));
@@ -62,6 +56,7 @@ public class EventService {
         return eventMapper.toResponse(event);
     }
 
+    @Transactional(readOnly = true)
     public Page<EventResponse> getRecommendedEvents(
             User user, double radius, int page, int size, String sortBy, String sortDirection
     ) {
@@ -70,17 +65,18 @@ public class EventService {
             throw new LocationException("User doesn't have a location");
 
         log.info("User with id: {} is getting recommended events", user.getId());
-        log.info("Users coords: {}", user.getLocation());
         return eventRepository.findWithinRadius(user.getLocation(), radius, PageRequest.of(page, size, sort))
                 .map(eventMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public EventResponse getOrganizedEvent(User user, Long eventId) {
         Event event = fetchOrThrow(user.getId(), eventId);
         log.info("Organized event with id: {} was retrieved successfully", eventId);
         return eventMapper.toResponse(event);
     }
 
+    @Transactional
     public void createEvent(User user, EventRequest createRequest) {
         Event event = eventMapper.toEntity(createRequest);
         event.setUser(user);
@@ -89,6 +85,7 @@ public class EventService {
         log.info("New event has been created by user with id: {}", user.getId());
     }
 
+    @Transactional
     public void updateEvent(User user, Long eventId, EventRequest eventRequest) {
         Event event = fetchOrThrow(user.getId(), eventId);
         setIfNotNull(event::setName, eventRequest.getName());
@@ -105,6 +102,7 @@ public class EventService {
         log.info("Event with id: {} was updated successfully", eventId);
     }
 
+    @Transactional
     public void deleteEvent(User user, Long eventId) {
         Event event = fetchOrThrow(user.getId(), eventId);
         eventRepository.delete(event);
