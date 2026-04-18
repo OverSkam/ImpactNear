@@ -20,6 +20,9 @@ public class ApplicationConfig {
 
     @Bean
     public Dotenv dotenv() {
-        return Dotenv.load();
+        return Dotenv.configure()
+                .directory("./") // Look in the root directory
+                .ignoreIfMissing() // CRITICAL: Don't crash if the file isn't there
+                .load();
     }
 }
