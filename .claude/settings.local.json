@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls \"C:\\\\\\\\Users\\\\\\\\super\\\\\\\\Java Projects\\\\\\\\projectV\\\\\\\\projectV\")"
+      "Bash(ls \"C:\\\\\\\\Users\\\\\\\\super\\\\\\\\Java Projects\\\\\\\\projectV\\\\\\\\projectV\")",
+      "Read(//c/Users/super/Java Projects/projectV/**)",
+      "Read(//c/Users/super/**)"
     ]
   }
 }
