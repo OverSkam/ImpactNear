@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class EventResponse {
     private Long id;
     private String name;
+    private String address;
     private String description;
     private EventStatus status;
     private Long userId;

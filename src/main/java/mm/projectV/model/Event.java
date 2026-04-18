@@ -50,7 +50,7 @@ public class Event extends AbstractModel {
     @Column(name = "participants_capacity")
     private Long participantsCapacity;
 
-    @Column(name = "participants_number")
+    @Column(name = "participants_number", nullable = false)
     private Long participantsNumber;
 
     @Column(name = "is_open")

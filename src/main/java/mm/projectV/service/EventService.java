@@ -80,6 +80,7 @@ public class EventService {
     public void createEvent(User user, EventRequest createRequest) {
         Event event = eventMapper.toEntity(createRequest);
         event.setUser(user);
+        event.setParticipantsNumber(0L);
         event.setLocation(createPoint(createRequest.getLongitude(), createRequest.getLatitude()));
         eventRepository.save(event);
         log.info("New event has been created by user with id: {}", user.getId());

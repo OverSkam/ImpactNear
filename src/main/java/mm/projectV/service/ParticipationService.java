@@ -92,7 +92,8 @@ public class ParticipationService {
         if (participationRepository.existsByUserIdAndEventId(user.getId(), eventId))
             throw new ParticipationException("The user has already submitted a request for participation");
 
-        Participation participation = new Participation(user, event, ParticipationStatus.PENDING, participationRequest.getMessage(), "");
+        Participation participation = new Participation(user, event, ParticipationStatus.PENDING, null, null);
+        participation.setApprovalRequest(participationRequest.getMessage());
         participationRepository.save(participation);
         log.info("Participation request was created");
     }
