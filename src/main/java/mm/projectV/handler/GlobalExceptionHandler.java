@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import mm.projectV.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -78,6 +79,12 @@ public class GlobalExceptionHandler {
         return ResponseHandler.generateResponse(HttpStatus.CONFLICT, true, e.getMessage(), null);
     }
 
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<?> handleException(DisabledException e) {
+        log.warn("Disabled exception [DisabledException]: {}", e.getMessage());
+
+        return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, true, e.getMessage(), null);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {

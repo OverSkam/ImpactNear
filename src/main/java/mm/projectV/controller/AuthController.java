@@ -15,13 +15,11 @@ import mm.projectV.validation.FullUpdate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -38,6 +36,9 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
 
         log.info("Logging in user");
+
+        if (!((CustomUserDetails) userDetails).getUser().getEnabled())
+            throw new DisabledException("Please verify your email");
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), loginRequest.getPassword())
@@ -69,6 +70,19 @@ public class AuthController {
                 HttpStatus.OK,
                 false,
                 "User has been registered",
+                null
+        );
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verify(@RequestParam String token) {
+        log.info("Trying to verify user's email");
+        authService.verify(token);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "User has been verified",
                 null
         );
     }

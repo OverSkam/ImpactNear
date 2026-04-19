@@ -30,6 +30,9 @@ public class User extends AbstractModel {
     @Column(name="password", nullable = false)
     private String password;
 
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled = false;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<Event> createdEvents;
 
