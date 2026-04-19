@@ -1,9 +1,6 @@
 package mm.projectV.dto;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +43,7 @@ public class EventRequest {
 
     private LocalDateTime endDate;
 
+    @Min(value = 1L)
     private Long participantsCapacity = 10000L;
 
     private Boolean isOpen = true;

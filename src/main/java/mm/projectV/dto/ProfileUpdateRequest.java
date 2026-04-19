@@ -15,15 +15,15 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class ProfileUpdateRequest {
     @NotBlank(message = "Name is required", groups = {FullUpdate.class})
-    @Length(min = 1, max = 30,
-            message = "Name should be at least 1 characters and maximum 30 characters",
+    @Length(min = 1, max = 40,
+            message = "Name should be at least 1 characters and maximum 40 characters",
             groups = {FullUpdate.class, PartialUpdate.class}
     )
     private String name;
 
     @NotBlank(message = "Surname is required", groups = {FullUpdate.class})
-    @Length(min = 1, max = 30,
-            message = "Surname should be at least 1 characters and maximum 30 characters",
+    @Length(min = 1, max = 40,
+            message = "Surname should be at least 1 characters and maximum 40 characters",
             groups = {FullUpdate.class, PartialUpdate.class}
     )
     private String surname;
