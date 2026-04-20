@@ -30,7 +30,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Length(min = 8, max = 30,
+    @Length(min = 8, max = 200,
             message = "Password should be at least 8 characters"
     )
     private String password;

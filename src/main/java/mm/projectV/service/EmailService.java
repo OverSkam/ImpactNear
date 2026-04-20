@@ -17,12 +17,24 @@ public class EmailService {
     @Value("${app.verification.base-url}")
     private String verifyBaseUrl;
 
+    @Value("${app.password-reset.base-url}")
+    private String resetPasswordUrl;
+
     public void sendVerificationEmail(String to, String token) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
         msg.setTo(to);
         msg.setSubject("Verify your account");
         msg.setText("Click to verify: " + verifyBaseUrl + "?token=" + token);
+        mailSender.send(msg);
+    }
+
+    public void sendPasswordResetEmail(String to, String token) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(from);
+        msg.setTo(to);
+        msg.setSubject("Password reset");
+        msg.setText("Click to reset you password: " + resetPasswordUrl + "?token=" + token);
         mailSender.send(msg);
     }
 }

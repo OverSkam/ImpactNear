@@ -2,9 +2,7 @@ package mm.projectV.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mm.projectV.dto.LoginRequest;
-import mm.projectV.dto.LoginResponse;
-import mm.projectV.dto.RegisterRequest;
+import mm.projectV.dto.*;
 import mm.projectV.enums.Role;
 import mm.projectV.model.CustomUserDetails;
 import mm.projectV.service.AuthService;
@@ -57,9 +55,9 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody @Validated(FullUpdate.class) RegisterRequest registerRequest) {
         if (authService.userByEmailExists(registerRequest.getEmail())) {
             return ResponseHandler.generateResponse(
-                    HttpStatus.valueOf(409),
+                    HttpStatus.BAD_REQUEST,
                     true,
-                    "User already exists",
+                    "An account with this email already exists. If you haven't verified yet, request a new verification email",
                     null
             );
         }
@@ -83,6 +81,45 @@ public class AuthController {
                 HttpStatus.OK,
                 false,
                 "User has been verified",
+                null
+        );
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestBody EmailRequest emailRequest) {
+        log.info("User is trying to get new verification email");
+        authService.resendVerification(emailRequest);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "If the email exists and is unverified, a verification link has been sent",
+                null
+        );
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody EmailRequest emailRequest) {
+        log.info("User is requesting password reset for account with email: {}", emailRequest.getEmail());
+        authService.requestPasswordReset(emailRequest);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "If an account exists for this email, a password reset link has been sent.",
+                null
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
+        log.info("User is trying to verify password reset");
+        authService.resetPassword(passwordResetRequest);
+
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Password was changed successfully",
                 null
         );
     }

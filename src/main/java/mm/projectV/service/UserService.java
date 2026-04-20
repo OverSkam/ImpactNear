@@ -42,7 +42,11 @@ public class UserService {
                 && userRepository.findByEmail(profileRequest.getEmail()).isPresent()) {
             throw new InvalidRequestException("Email is already in use");
         }
-        if (profileRequest.getPassword() != null && !profileRequest.getPassword().isBlank())
+        if (profileRequest.getPassword() != null &&
+                !profileRequest.getPassword().isBlank() &&
+                profileRequest.getPassword().length() > 8 &&
+                profileRequest.getPassword().length() < 200
+        )
             user.setPassword(passwordEncoder.encode(profileRequest.getPassword()));
         userRepository.save(user);
         log.info("User with id: {}, was updated successfully", user.getId());

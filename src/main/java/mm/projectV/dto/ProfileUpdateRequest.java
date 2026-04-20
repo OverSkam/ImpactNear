@@ -32,9 +32,5 @@ public class ProfileUpdateRequest {
     @Email(message = "Email should be valid", groups = {FullUpdate.class, PartialUpdate.class})
     private String email;
 
-    @Pattern(
-            regexp = "^$|^.{8,}$",
-            message = "Password must be empty or at least 8 characters long"
-    )
     private String password;
 }
