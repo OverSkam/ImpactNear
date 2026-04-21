@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException(ConstraintViolationException ex) {
-        log.warn("Constraint violation exception [ConstraintViolationException]: {}", ex.getMessage());
+        log.warn("Constraint violation exception [ConstraintViolationException]: ", ex);
 
         Map<String, String> errors = ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        log.warn("Validation exception [MethodArgumentNotValidException]: {}", ex.getMessage());
+        log.warn("Validation exception [MethodArgumentNotValidException]: ", ex);
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -46,49 +46,49 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleException(NotFoundException e) {
-        log.warn("Not found exception [NotFoundException]: {}", e.getMessage());
+        log.warn("Not found exception [NotFoundException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(PermissionException.class)
     public ResponseEntity<?> handleException(PermissionException e) {
-        log.warn("Permission exception [PermissionException]: {}", e.getMessage());
+        log.warn("Permission exception [PermissionException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(LocationException.class)
     public ResponseEntity<?> handleException(LocationException e) {
-        log.warn("Location exception [LocationException]: {}", e.getMessage());
+        log.warn("Location exception [LocationException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<?> handleException(InvalidRequestException e) {
-        log.warn("Invalid request exception [InvalidRequestException]: {}", e.getMessage());
+        log.warn("Invalid request exception [InvalidRequestException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.BAD_REQUEST, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(ParticipationException.class)
     public ResponseEntity<?> handleException(ParticipationException e) {
-        log.warn("Participation exception [ParticipationException]: {}", e.getMessage());
+        log.warn("Participation exception [ParticipationException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.CONFLICT, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<?> handleException(DisabledException e) {
-        log.warn("Disabled exception [DisabledException]: {}", e.getMessage());
+        log.warn("Disabled exception [DisabledException]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.FORBIDDEN, true, e.getMessage(), null);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
-        log.error("Internal server error [Exception]: {}", e.getMessage());
+        log.error("Internal server error [Exception]: ", e);
 
         return ResponseHandler.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Internal server error", null);
     }

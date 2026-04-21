@@ -3,7 +3,8 @@
     "allow": [
       "Bash(ls \"C:\\\\\\\\Users\\\\\\\\super\\\\\\\\Java Projects\\\\\\\\projectV\\\\\\\\projectV\")",
       "Read(//c/Users/super/Java Projects/projectV/**)",
-      "Read(//c/Users/super/**)"
+      "Read(//c/Users/super/**)",
+      "Bash(git *)"
     ]
   }
 }

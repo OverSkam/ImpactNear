@@ -114,9 +114,10 @@ public class ParticipationService {
         if (!participation.getStatus().equals(ParticipationStatus.PENDING))
             throw new ParticipationException("The participation request has already been reviewed");
 
-        if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED)
-                && event.getParticipantsNumber() >= event.getParticipantsCapacity())
-            throw new ParticipationException("The participant limit for this event has been exceeded");
+        // I think it is a right way
+//        if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED)
+//                && event.getParticipantsNumber() >= event.getParticipantsCapacity())
+//            throw new ParticipationException("The participant limit for this event has been exceeded");
 
         if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED))
             event.setParticipantsNumber(event.getParticipantsNumber() + 1);

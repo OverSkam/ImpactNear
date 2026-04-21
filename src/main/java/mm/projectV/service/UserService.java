@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LocationRequest;
 import mm.projectV.dto.ProfileUpdateRequest;
+import mm.projectV.dto.UserResponse;
 import mm.projectV.exception.InvalidRequestException;
+import mm.projectV.exception.NotFoundException;
 import mm.projectV.model.User;
 import mm.projectV.repository.UserRepository;
 import org.locationtech.jts.geom.Coordinate;
@@ -37,11 +39,6 @@ public class UserService {
     public void updateProfile(User user, ProfileUpdateRequest profileRequest) {
         setIfNotNull(user::setName, profileRequest.getName());
         setIfNotNull(user::setSurname, profileRequest.getSurname());
-        if (profileRequest.getEmail() != null
-                && !profileRequest.getEmail().equals(user.getEmail())
-                && userRepository.findByEmail(profileRequest.getEmail()).isPresent()) {
-            throw new InvalidRequestException("Email is already in use");
-        }
         if (profileRequest.getPassword() != null &&
                 !profileRequest.getPassword().isBlank() &&
                 profileRequest.getPassword().length() > 8 &&
@@ -55,5 +52,14 @@ public class UserService {
     private <T> void setIfNotNull(Consumer<T> setter, T value) {
         if (value != null)
             setter.accept(value);
+    }
+
+    @Transactional
+    public UserResponse getUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        log.info("Fetching user with id: {}", userId);
+        return new UserResponse(user.getName(), user.getSurname());
     }
 }

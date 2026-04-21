@@ -11,6 +11,7 @@ import mm.projectV.service.UserService;
 import mm.projectV.handler.ResponseHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?>  getUser(@PathVariable Long userId) {
+        log.info("Organizer trying to get information about user with id: {}", userId);
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "User fetched successfully",
+                userService.getUser(userId)
+        );
+    }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@AuthenticationPrincipal CustomUserDetails principal) {

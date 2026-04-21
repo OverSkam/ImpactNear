@@ -28,9 +28,5 @@ public class ProfileUpdateRequest {
     )
     private String surname;
 
-    @NotBlank(message = "Email is required", groups = {FullUpdate.class})
-    @Email(message = "Email should be valid", groups = {FullUpdate.class, PartialUpdate.class})
-    private String email;
-
     private String password;
 }
