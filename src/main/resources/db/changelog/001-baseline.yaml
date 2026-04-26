@@ -1,0 +1,290 @@
+databaseChangeLog:
+- changeSet:
+    id: 1777137089023-1
+    author: super (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: create_date
+            type: datetime(6)
+        - column:
+            name: last_modified_date
+            type: datetime(6)
+        - column:
+            name: address
+            type: VARCHAR(255)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            name: end
+            type: datetime(6)
+        - column:
+            name: is_open
+            type: BIT(1)
+        - column:
+            name: location
+            type: POINT SRID 4326
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            name: participants_capacity
+            type: BIGINT
+        - column:
+            name: participants_number
+            type: BIGINT
+        - column:
+            name: start
+            type: datetime(6)
+        - column:
+            defaultValue: PAUSED
+            name: status
+            type: VARCHAR(20)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: BIGINT
+        tableName: events
+- changeSet:
+    id: 1777137089023-2
+    author: super (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: create_date
+            type: datetime(6)
+        - column:
+            name: last_modified_date
+            type: datetime(6)
+        - column:
+            name: approval_request
+            type: VARCHAR(255)
+        - column:
+            name: approval_response
+            type: VARCHAR(255)
+        - column:
+            defaultValue: PENDING
+            name: status
+            type: VARCHAR(20)
+        - column:
+            name: event_id
+            type: BIGINT
+        - column:
+            name: user_id
+            type: BIGINT
+        tableName: participations
+- changeSet:
+    id: 1777137089023-3
+    author: super (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: create_date
+            type: datetime(6)
+        - column:
+            name: last_modified_date
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: location
+            type: POINT SRID 4326
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(255)
+        - column:
+            name: role
+            type: ENUM('ROLE_MODERATOR', 'ROLE_ORGANIZER', 'ROLE_USER')
+        - column:
+            constraints:
+              nullable: false
+            name: surname
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: enabled
+            type: BIT(1)
+        tableName: users
+- changeSet:
+    id: 1777137089023-4
+    author: super (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+            name: id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: create_date
+            type: datetime(6)
+        - column:
+            name: last_modified_date
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: token
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: expires_at
+            type: datetime(6)
+        - column:
+            constraints:
+              nullable: false
+            name: type
+            type: VARCHAR(20)
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: user_id
+            type: BIGINT
+        tableName: verification_tokens
+- changeSet:
+    id: 1777137089023-5
+    author: super (generated)
+    changes:
+    - createIndex:
+        associatedWith: ''
+        columns:
+        - column:
+            name: user_id
+        indexName: FK166yf958qjqf8uoslyuk9e19p
+        tableName: participations
+- changeSet:
+    id: 1777137089023-6
+    author: super (generated)
+    changes:
+    - createIndex:
+        associatedWith: ''
+        columns:
+        - column:
+            name: user_id
+        indexName: FKat8p3s7yjcp57lny4udqvqncq
+        tableName: events
+- changeSet:
+    id: 1777137089023-7
+    author: super (generated)
+    changes:
+    - createIndex:
+        associatedWith: ''
+        columns:
+        - column:
+            name: event_id
+        indexName: FKoqloqr8uj2hcww6y272j0kqda
+        tableName: participations
+- changeSet:
+    id: 1777137089023-8
+    author: super (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: participations
+        constraintName: FK166yf958qjqf8uoslyuk9e19p
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1777137089023-9
+    author: super (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: verification_tokens
+        constraintName: FK54y8mqsnq1rtyf581sfmrbp4f
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1777137089023-10
+    author: super (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: events
+        constraintName: FKat8p3s7yjcp57lny4udqvqncq
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1777137089023-11
+    author: super (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: event_id
+        baseTableName: participations
+        constraintName: FKoqloqr8uj2hcww6y272j0kqda
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: id
+        referencedTableName: events
+        validate: true
+

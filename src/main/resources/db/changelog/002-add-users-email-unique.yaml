@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-add-users-email-unique
+      author: super
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uk_users_email
