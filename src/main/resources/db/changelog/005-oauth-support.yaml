@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-oauth-password-nullable
+      author: super
+      changes:
+        - dropNotNullConstraint:
+            tableName: users
+            columnName: password
+            columnDataType: VARCHAR(255)
+
+  - changeSet:
+      id: 005-oauth-user-identities
+      author: super
+      changes:
+        - createTable:
+            tableName: user_identities
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_identities_user
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: provider
+                  type: VARCHAR(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: provider_subject
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email_at_link
+                  type: VARCHAR(255)
+              - column:
+                  name: create_date
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_date
+                  type: TIMESTAMP
+        - addUniqueConstraint:
+            tableName: user_identities
+            columnNames: provider, provider_subject
+            constraintName: uk_user_identities_provider_subject
+        - createIndex:
+            tableName: user_identities
+            indexName: idx_user_identities_user_id
+            columns:
+              - column:
+                  name: user_id

@@ -38,6 +38,10 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@AuthenticationPrincipal CustomUserDetails principal) {
+        if (principal == null) {
+            return ResponseHandler.generateResponse(HttpStatus.UNAUTHORIZED, true, "Unauthenticated", null);
+        }
+
         User user = principal.getUser();
         log.info("Fetching profile for user with id: {}", user.getId());
         return ResponseHandler.generateResponse(

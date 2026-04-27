@@ -2,6 +2,7 @@ package mm.projectV.config;
 
 import lombok.AllArgsConstructor;
 import mm.projectV.filter.JwtFilter;
+import mm.projectV.handler.OAuth2LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,11 +29,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   OAuth2LoginSuccessHandler oauth2SuccessHandler) throws Exception {
         return http.authorizeHttpRequests(authRequests ->
                         authRequests
                                 .requestMatchers("/api/v1/auth/logout-all").authenticated()
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs").permitAll()
                                 .requestMatchers("/api/v1/events/random-events").permitAll()
@@ -41,6 +44,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
+                .oauth2Login(o -> o.successHandler(oauth2SuccessHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

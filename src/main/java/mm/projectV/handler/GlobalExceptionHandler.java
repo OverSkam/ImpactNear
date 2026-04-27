@@ -92,4 +92,10 @@ public class GlobalExceptionHandler {
 
         return ResponseHandler.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Internal server error", null);
     }
+
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<?> handleNoResource(org.springframework.web.servlet.resource.NoResourceFoundException e) {
+        return ResponseHandler.generateResponse(HttpStatus.NOT_FOUND, true, "Not found", null);
+    }
+
 }

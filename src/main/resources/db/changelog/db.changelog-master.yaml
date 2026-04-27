@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-add-users-token-version.yaml
   - include:
       file: db/changelog/004-add-events-spatial-index.yaml
+  - include:
+      file: db/changelog/005-oauth-support.yaml
