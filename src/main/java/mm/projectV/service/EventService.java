@@ -62,8 +62,22 @@ public class EventService {
         if (user.getLocation() == null)
             throw new LocationException("User doesn't have a location");
 
+        Point center = user.getLocation();
+        double centerLat = center.getY();
+        double centerLon = center.getX();
+
+        double latDelta = Math.toDegrees(radius / 6_371_000.0);
+        double lonDelta = Math.toDegrees(radius / (6_371_000.0 * Math.cos(Math.toRadians(centerLat))));
+
+        double minLat = centerLat - latDelta;
+        double maxLat = centerLat + latDelta;
+        double minLon = centerLon - lonDelta;
+        double maxLon = centerLon + lonDelta;
+
         log.info("User with id: {} is getting recommended events", user.getId());
-        return eventRepository.findWithinRadius(user.getLocation(), radius, PageRequest.of(page, size, sort))
+        return eventRepository.findWithinRadius(
+                        center, radius, minLat, maxLat, minLon, maxLon,
+                        PageRequest.of(page, size, sort))
                 .map(eventMapper::toResponse);
     }
 

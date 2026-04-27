@@ -38,7 +38,7 @@ public class Event extends AbstractModel {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "location", columnDefinition = "POINT SRID 4326")
+    @Column(name = "location", columnDefinition = "POINT SRID 4326", nullable = false)
     private Point location;
 
     @Column(name = "start")

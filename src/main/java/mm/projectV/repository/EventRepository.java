@@ -19,10 +19,42 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findByUserIdAndId(Long userId, Long id);
     boolean existsByIdAndUserId(Long eventId, Long userId);
 
-    @Query("SELECT e FROM Event e WHERE function('ST_Distance_Sphere', e.location, :center) <= :radius")
+    @Query(value = """
+          SELECT * FROM events e
+          WHERE MBRContains(
+              ST_SRID(
+                  ST_GeomFromText(CONCAT('POLYGON((',
+                      :minLon, ' ', :minLat, ',',
+                      :maxLon, ' ', :minLat, ',',
+                      :maxLon, ' ', :maxLat, ',',
+                      :minLon, ' ', :maxLat, ',',
+                      :minLon, ' ', :minLat, '))')),
+                  4326),
+              e.location)
+          AND ST_Distance_Sphere(e.location, :center) <= :radiusMeters
+        """,
+            countQuery = """
+                    SELECT COUNT(*) FROM events e
+                    WHERE MBRContains(
+                        ST_SRID(
+                            ST_GeomFromText(CONCAT('POLYGON((',
+                                :minLon, ' ', :minLat, ',',
+                                :maxLon, ' ', :minLat, ',',
+                                :maxLon, ' ', :maxLat, ',',
+                                :minLon, ' ', :maxLat, ',',
+                                :minLon, ' ', :minLat, '))')),
+                            4326),
+                        e.location)
+                    AND ST_Distance_Sphere(e.location, :center) <= :radiusMeters
+                    """,
+            nativeQuery = true)
     Page<Event> findWithinRadius(
             @Param("center") Point center,
-            @Param("radius") double radiusInMeters,
+            @Param("radiusMeters") double radiusMeters,
+            @Param("minLat") double minLat,
+            @Param("maxLat") double maxLat,
+            @Param("minLon") double minLon,
+            @Param("maxLon") double maxLon,
             Pageable pageable
     );
 }

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-events-location-not-null
+      author: super
+      changes:
+        - sql:
+            sql: ALTER TABLE events MODIFY COLUMN location POINT SRID 4326 NOT NULL
+            rollback: ALTER TABLE events MODIFY COLUMN location POINT SRID 4326 NULL
+  - changeSet:
+      id: 004-events-location-spatial-index
+      author: super
+      changes:
+        - sql:
+            sql: CREATE SPATIAL INDEX idx_events_location ON events (location)
+            rollback: DROP INDEX idx_events_location ON events
