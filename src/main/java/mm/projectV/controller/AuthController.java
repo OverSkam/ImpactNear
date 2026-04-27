@@ -3,10 +3,11 @@ package mm.projectV.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.*;
-import mm.projectV.enums.Role;
 import mm.projectV.model.CustomUserDetails;
+import mm.projectV.model.User;
 import mm.projectV.service.AuthService;
 import mm.projectV.service.CustomUserDetailsService;
+import mm.projectV.service.TokenVersionService;
 import mm.projectV.util.JwtUtil;
 import mm.projectV.handler.ResponseHandler;
 import mm.projectV.validation.FullUpdate;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,26 +30,27 @@ public class AuthController {
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final TokenVersionService tokenVersionService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated LoginRequest loginRequest) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        User user = ((CustomUserDetails) userDetails).getUser();
 
         log.info("Logging in user");
 
-        if (!((CustomUserDetails) userDetails).getUser().getEnabled())
+        if (!user.getEnabled())
             throw new DisabledException("Please verify your email");
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userDetails.getUsername(), loginRequest.getPassword())
         );
-        String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
-        Role role = ((CustomUserDetails) userDetails).getUser().getRole();
+        String jwtToken = jwtUtil.generateToken(userDetails.getUsername(), user.getId(), user.getTokenVersion());
         return ResponseHandler.generateResponse(
                 HttpStatus.OK,
                 false,
                 "User logged in successfully",
-                new LoginResponse(jwtToken, role)
+                new LoginResponse(jwtToken, user.getRole())
         );
     }
 
@@ -120,6 +123,17 @@ public class AuthController {
                 HttpStatus.OK,
                 false,
                 "Password was changed successfully",
+                null
+        );
+    }
+
+    @PostMapping("/logout-all")
+    public ResponseEntity<?> logoutAll(@AuthenticationPrincipal CustomUserDetails principal) {
+        tokenVersionService.bumpVersion(principal.getUser().getId());
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "All sessions revoked",
                 null
         );
     }

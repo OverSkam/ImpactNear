@@ -31,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository tokenRepository;
     private final EmailService emailService;
+    private final TokenVersionService tokenVersionService;
 
     @Transactional
     public void register(RegisterRequest registerRequest) {
@@ -100,9 +101,11 @@ public class AuthService {
         if (verificationToken.getTokenExpiresAt().isBefore(LocalDateTime.now()))
             throw new InvalidRequestException("Token expired");
 
-        verificationToken.getUser().setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
+        User user = verificationToken.getUser();
+        user.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
         tokenRepository.delete(verificationToken);
-        log.info("User with id: {} has changed his password", verificationToken.getUser().getId());
+        tokenVersionService.bumpVersion(user.getId());
+        log.info("User with id: {} has changed his password", user.getId());
     }
 
     private VerificationToken createNewTokenForUser(User user, TokenType type) {

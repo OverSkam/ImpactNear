@@ -33,6 +33,9 @@ public class User extends AbstractModel {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = false;
 
+    @Column(name = "token_version", nullable = false)
+    private Long tokenVersion = 0L;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<Event> createdEvents;
 

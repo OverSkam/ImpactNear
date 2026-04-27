@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/001-baseline.yaml
   - include:
       file: db/changelog/002-add-users-email-unique.yaml
+  - include:
+      file: db/changelog/003-add-users-token-version.yaml

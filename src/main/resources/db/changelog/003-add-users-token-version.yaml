@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-users-token-version
+      author: super
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: token_version
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
