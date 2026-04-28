@@ -2,6 +2,7 @@ package mm.projectV.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.model.User;
@@ -9,6 +10,7 @@ import mm.projectV.service.OAuth2UserLinker;
 import mm.projectV.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -43,6 +45,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
             User user = linker.resolveOrCreate(provider, oidc);
             String jwt = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getTokenVersion());
+
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
 
             String target = successRedirect
                     + "#token=" + URLEncoder.encode(jwt, StandardCharsets.UTF_8)

@@ -4,7 +4,11 @@
       "Bash(ls \"C:\\\\\\\\Users\\\\\\\\super\\\\\\\\Java Projects\\\\\\\\projectV\\\\\\\\projectV\")",
       "Read(//c/Users/super/Java Projects/projectV/**)",
       "Read(//c/Users/super/**)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(unzip -l \"C:/Users/super/Downloads/1cv21.zip\")",
+      "Read(//tmp/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(cygpath -w /tmp/cv_extract/junior/word/document.xml)"
     ]
   }
 }
