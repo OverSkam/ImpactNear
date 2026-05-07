@@ -8,7 +8,8 @@
       "Bash(unzip -l \"C:/Users/super/Downloads/1cv21.zip\")",
       "Read(//tmp/**)",
       "Bash(python3 -c ' *)",
-      "Bash(cygpath -w /tmp/cv_extract/junior/word/document.xml)"
+      "Bash(cygpath -w /tmp/cv_extract/junior/word/document.xml)",
+      "Bash(npx tsc *)"
     ]
   }
 }

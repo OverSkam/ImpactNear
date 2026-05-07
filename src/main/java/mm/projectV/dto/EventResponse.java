@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import mm.projectV.enums.EventStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +24,5 @@ public class EventResponse {
     private LocalDateTime endDate;
     private Long participantsCapacity;
     private Long participantsNumber;
+    private List<EventImageResponse> images;
 }

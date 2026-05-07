@@ -6,6 +6,7 @@ import mm.projectV.dto.EventRequest;
 import mm.projectV.dto.ParticipationRequest;
 import mm.projectV.model.CustomUserDetails;
 import mm.projectV.model.User;
+import mm.projectV.service.EventImageService;
 import mm.projectV.service.EventService;
 import mm.projectV.service.ParticipationService;
 import mm.projectV.handler.ResponseHandler;
@@ -17,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
     private final EventService eventService;
     private final ParticipationService participationService;
+    private final EventImageService eventImageService;
 
     @GetMapping("/random-events")
     public ResponseEntity<?> getRandomEvents(
@@ -283,6 +286,41 @@ public class EventController {
                 HttpStatus.OK,
                 false,
                 "Participation request was updated successfully",
+                null
+        );
+    }
+
+    @PostMapping("/{eventId}/images")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> uploadEventImage(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @PathVariable Long eventId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        User user = principal.getUser();
+        log.info("Uploading image for event {} by user {}", eventId, user.getId());
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Image uploaded successfully",
+                eventImageService.upload(user, eventId, file)
+        );
+    }
+
+    @DeleteMapping("/{eventId}/images/{imageId}")
+    @PreAuthorize("hasRole('ORGANIZER')")
+    public ResponseEntity<?> deleteEventImage(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @PathVariable Long eventId,
+            @PathVariable Long imageId
+    ) {
+        User user = principal.getUser();
+        log.info("Deleting image {} from event {} by user {}", imageId, eventId, user.getId());
+        eventImageService.delete(user, eventId, imageId);
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Image deleted successfully",
                 null
         );
     }

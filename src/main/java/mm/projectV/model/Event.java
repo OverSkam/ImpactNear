@@ -35,6 +35,10 @@ public class Event extends AbstractModel {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participants;
 
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    private List<EventImage> images;
+
     @Column(name = "address")
     private String address;
 
