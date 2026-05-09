@@ -3,7 +3,7 @@ package mm.projectV.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mm.projectV.enums.ParticipationStatus;
+import mm.projectV.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +14,7 @@ public class ParticipationResponse {
     private Long id;
     private Long userId;
     private Long eventId;
-    private ParticipationStatus status;
+    private RequestStatus status;
     private String approvalRequest;
     private String approvalResponse;
     private LocalDateTime createDate;

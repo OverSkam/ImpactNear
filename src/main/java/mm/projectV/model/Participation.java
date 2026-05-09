@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import mm.projectV.enums.ParticipationStatus;
+import mm.projectV.enums.RequestStatus;
 
 @Data
 @Entity
@@ -24,7 +24,7 @@ public class Participation extends AbstractModel {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
-    private ParticipationStatus status;
+    private RequestStatus status;
 
     @Column(name = "approval_request")
     private String approvalRequest;

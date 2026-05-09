@@ -3,7 +3,7 @@ package mm.projectV.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mm.projectV.enums.ParticipationStatus;
+import mm.projectV.enums.RequestStatus;
 import org.hibernate.validator.constraints.Length;
 
 @Data
@@ -14,5 +14,5 @@ public class ParticipationRequest {
             message = "Message should be less than 40 characters"
     )
     private String message;
-    private ParticipationStatus status;
+    private RequestStatus status;
 }

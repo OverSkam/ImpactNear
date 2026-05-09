@@ -39,7 +39,7 @@ public class SecurityConfig {
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs").permitAll()
                                 .requestMatchers("/api/v1/events/random-events").permitAll()
-                                .requestMatchers("/api/v1/admin/**").hasRole("MODERATOR")
+                                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/dev/**").hasAnyRole("USER", "ORGANIZER")
                                 .anyRequest().authenticated()
                 )

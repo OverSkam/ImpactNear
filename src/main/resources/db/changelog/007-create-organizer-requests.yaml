@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-create-organizer-requests
+      author: maksym
+      changes:
+        - createTable:
+            tableName: organizer_requests
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: create_date
+                  type: datetime(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_date
+                  type: datetime(6)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: request_status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: request_message
+                  type: VARCHAR(255)
+              - column:
+                  name: review_message
+                  type: VARCHAR(255)
+              - column:
+                  name: managed_by_user_id
+                  type: BIGINT
+              - column:
+                  name: managed_at
+                  type: datetime(6)
+        - addForeignKeyConstraint:
+            constraintName: fk_organizer_requests_user
+            baseTableName: organizer_requests
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: fk_organizer_requests_managed_by
+            baseTableName: organizer_requests
+            baseColumnNames: managed_by_user_id
+            referencedTableName: users
+            referencedColumnNames: id

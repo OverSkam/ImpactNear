@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-rename-role-moderator-to-admin
+      author: maksym
+      changes:
+        - sql:
+            sql: ALTER TABLE users MODIFY COLUMN role ENUM('ROLE_USER', 'ROLE_ORGANIZER', 'ROLE_MODERATOR', 'ROLE_ADMIN')
+        - sql:
+            sql: UPDATE users SET role = 'ROLE_ADMIN' WHERE role = 'ROLE_MODERATOR'
+        - sql:
+            sql: ALTER TABLE users MODIFY COLUMN role ENUM('ROLE_USER', 'ROLE_ORGANIZER', 'ROLE_ADMIN')

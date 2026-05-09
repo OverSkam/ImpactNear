@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.LocationRequest;
 import mm.projectV.dto.ProfileUpdateRequest;
 import mm.projectV.dto.UserResponse;
+import mm.projectV.enums.RequestStatus;
 import mm.projectV.exception.InvalidRequestException;
 import mm.projectV.exception.NotFoundException;
+import mm.projectV.model.OrganizerRequest;
 import mm.projectV.model.User;
+import mm.projectV.repository.OrganizerRequestRepository;
 import mm.projectV.repository.UserRepository;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -27,6 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private static final GeometryFactory GEO_FACTORY =
             new GeometryFactory(new PrecisionModel(), 4326);
+    private final OrganizerRequestRepository organizerRequestRepository;
 
     @Transactional
     public void changeLocation(User user, LocationRequest locationRequest) {
@@ -62,4 +66,18 @@ public class UserService {
         log.info("Fetching user with id: {}", userId);
         return new UserResponse(user.getName(), user.getSurname());
     }
+
+    @Transactional
+    public void requestOrganizerRights(User user, String message) {
+        if (organizerRequestRepository.existsByUserId(user.getId()))
+            throw new InvalidRequestException("Request was already sent");
+
+        OrganizerRequest request = new OrganizerRequest();
+        request.setUser(user);
+        request.setRequestMessage(message);
+        request.setRequestStatus(RequestStatus.PENDING);
+        organizerRequestRepository.save(request);
+    }
+
+
 }

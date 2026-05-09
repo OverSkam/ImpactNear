@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mm.projectV.dto.ParticipationRequest;
 import mm.projectV.dto.ParticipationResponse;
-import mm.projectV.enums.EventStatus;
-import mm.projectV.enums.ParticipationStatus;
+import mm.projectV.enums.RequestStatus;
 import mm.projectV.enums.Role;
 import mm.projectV.exception.NotFoundException;
 import mm.projectV.exception.ParticipationException;
@@ -92,7 +91,7 @@ public class ParticipationService {
         if (participationRepository.existsByUserIdAndEventId(user.getId(), eventId))
             throw new ParticipationException("The user has already submitted a request for participation");
 
-        Participation participation = new Participation(user, event, ParticipationStatus.PENDING, null, null);
+        Participation participation = new Participation(user, event, RequestStatus.PENDING, null, null);
         participation.setApprovalRequest(participationRequest.getMessage());
         participationRepository.save(participation);
         log.info("Participation request was created");
@@ -111,7 +110,7 @@ public class ParticipationService {
         if (!event.getUser().getId().equals(user.getId()))
             throw new PermissionException("Permission denied");
 
-        if (!participation.getStatus().equals(ParticipationStatus.PENDING))
+        if (!participation.getStatus().equals(RequestStatus.PENDING))
             throw new ParticipationException("The participation request has already been reviewed");
 
         // I think it is a right way
@@ -119,7 +118,7 @@ public class ParticipationService {
 //                && event.getParticipantsNumber() >= event.getParticipantsCapacity())
 //            throw new ParticipationException("The participant limit for this event has been exceeded");
 
-        if (participationRequest.getStatus().equals(ParticipationStatus.APPROVED))
+        if (participationRequest.getStatus().equals(RequestStatus.APPROVED))
             event.setParticipantsNumber(event.getParticipantsNumber() + 1);
 
         participation.setApprovalResponse(participationRequest.getMessage());

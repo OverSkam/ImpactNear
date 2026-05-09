@@ -11,3 +11,7 @@ databaseChangeLog:
       file: db/changelog/005-oauth-support.yaml
   - include:
       file: db/changelog/006-create-event-images.yaml
+  - include:
+      file: db/changelog/007-create-organizer-requests.yaml
+  - include:
+      file: db/changelog/008-rename-role-moderator-to-admin.yaml

@@ -1,6 +1,6 @@
 package mm.projectV.enums;
 
-public enum ParticipationStatus {
+public enum RequestStatus {
     APPROVED,
     PENDING,
     REJECTED

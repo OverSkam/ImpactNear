@@ -83,4 +83,20 @@ public class UserController {
                 null
         );
     }
+
+    @PostMapping("/me/organizer-request")
+    public ResponseEntity<?> requestOrganizerRights(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody String message
+    ) {
+        User user = principal.getUser();
+        log.info("Sending organizer request for user with id: {}", user.getId());
+        userService.requestOrganizerRights(user, message);
+        return ResponseHandler.generateResponse(
+                HttpStatus.OK,
+                false,
+                "Organizer request was sent successfully",
+                null
+        );
+    }
 }
