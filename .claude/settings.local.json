@@ -9,7 +9,8 @@
       "Read(//tmp/**)",
       "Bash(python3 -c ' *)",
       "Bash(cygpath -w /tmp/cv_extract/junior/word/document.xml)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(dir C:\\\\Users\\\\super\\\\Java Projects\\\\projectV *)"
     ]
   }
 }
